@@ -17,7 +17,13 @@ import {
   Send,
   Settings,
   TrendingUp,
-  TrendingDown
+  TrendingDown,
+  Zap,
+  Activity,
+  ShieldCheck,
+  Terminal,
+  Sliders,
+  Wand2
 } from 'lucide-react';
 import {
   ResponsiveContainer,
@@ -42,6 +48,116 @@ export const OverviewView: React.FC<OverviewProps> = ({ onNavigate }) => {
   const [quickText, setQuickText] = useState('');
   const [quickLoading, setQuickLoading] = useState(false);
   const [quickResult, setQuickResult] = useState<any>(null);
+
+  // Interactive Hero Model Matrix State
+  const [activeHeroModel, setActiveHeroModel] = useState<'roberta' | 'llama3' | 'distilbert' | 'gptneo'>('roberta');
+  const [heroActiveTokenIdx, setHeroActiveTokenIdx] = useState<number | null>(null);
+
+  const heroModels = {
+    roberta: {
+      name: 'RoBERTa-Large',
+      badge: 'High Precision',
+      badgeColor: '#8b5cf6',
+      architecture: 'Bidirectional Encoder Transformer',
+      params: '355M Params',
+      latency: '24.1 ms',
+      accuracy: '94.8%',
+      attentionHeads: '16 / 16 Heads Active',
+      throughput: '1,420 tok/s',
+      color: '#8b5cf6',
+      gradient: 'linear-gradient(135deg, #8b5cf6 0%, #a855f7 100%)',
+      accentGlow: 'rgba(139, 92, 246, 0.45)',
+      tokens: [
+        { text: 'Deep', weight: 0.94, tag: 'ADJ' },
+        { text: 'contextual', weight: 0.98, tag: 'ADJ' },
+        { text: 'representation', weight: 0.95, tag: 'NOUN' },
+        { text: 'captures', weight: 0.74, tag: 'VERB' },
+        { text: 'subtle', weight: 0.89, tag: 'ADJ' },
+        { text: 'semantic', weight: 0.96, tag: 'ADJ' },
+        { text: 'nuance', weight: 0.97, tag: 'NOUN' }
+      ],
+      prediction: '99.4% POSITIVE SENTIMENT',
+      confidence: 99.4,
+      perplexity: 1.18,
+      wavePoints: 'M0,18 Q30,4 60,18 T120,18 T180,18 T240,6 T300,18'
+    },
+    llama3: {
+      name: 'LLaMA-3 8B',
+      badge: 'Reasoning Core',
+      badgeColor: '#06b6d4',
+      architecture: 'Auto-Regressive Decoder Transformer',
+      params: '8.03B Params',
+      latency: '42.6 ms',
+      accuracy: '96.2%',
+      attentionHeads: '32 / 32 Heads Active',
+      throughput: '980 tok/s',
+      color: '#06b6d4',
+      gradient: 'linear-gradient(135deg, #06b6d4 0%, #3b82f6 100%)',
+      accentGlow: 'rgba(6, 182, 212, 0.45)',
+      tokens: [
+        { text: 'Zero-shot', weight: 0.95, tag: 'PREFIX' },
+        { text: 'reasoning', weight: 0.99, tag: 'NOUN' },
+        { text: 'yields', weight: 0.81, tag: 'VERB' },
+        { text: 'chain-of-thought', weight: 0.98, tag: 'METHOD' },
+        { text: 'precision', weight: 0.97, tag: 'METRIC' }
+      ],
+      prediction: '98.7% HIGH REASONING',
+      confidence: 98.7,
+      perplexity: 1.12,
+      wavePoints: 'M0,14 Q35,2 70,16 T140,8 T210,18 T280,4 T300,14'
+    },
+    distilbert: {
+      name: 'DistilBERT-v4',
+      badge: 'Ultra Fast',
+      badgeColor: '#10b981',
+      architecture: 'Distilled Knowledge Transformer',
+      params: '66M Params',
+      latency: '11.8 ms',
+      accuracy: '92.4%',
+      attentionHeads: '6 / 6 Heads Active',
+      throughput: '3,850 tok/s',
+      color: '#10b981',
+      gradient: 'linear-gradient(135deg, #10b981 0%, #059669 100%)',
+      accentGlow: 'rgba(16, 185, 129, 0.45)',
+      tokens: [
+        { text: 'Optimized', weight: 0.96, tag: 'ADJ' },
+        { text: 'real-time', weight: 0.93, tag: 'ADJ' },
+        { text: 'inference', weight: 0.98, tag: 'NOUN' },
+        { text: 'with', weight: 0.48, tag: 'ADP' },
+        { text: 'low', weight: 0.88, tag: 'ADJ' },
+        { text: 'latency', weight: 0.99, tag: 'METRIC' }
+      ],
+      prediction: '97.2% HIGH THROUGHPUT',
+      confidence: 97.2,
+      perplexity: 1.25,
+      wavePoints: 'M0,12 Q20,2 45,18 T90,6 T150,16 T220,4 T300,12'
+    },
+    gptneo: {
+      name: 'GPT-NeoX',
+      badge: 'Generative Lab',
+      badgeColor: '#ec4899',
+      architecture: 'Multi-Task Generative Decoder',
+      params: '1.3B Params',
+      latency: '31.2 ms',
+      accuracy: '93.7%',
+      attentionHeads: '16 / 16 Heads Active',
+      throughput: '1,650 tok/s',
+      color: '#ec4899',
+      gradient: 'linear-gradient(135deg, #ec4899 0%, #d946ef 100%)',
+      accentGlow: 'rgba(236, 72, 153, 0.45)',
+      tokens: [
+        { text: 'Generative', weight: 0.94, tag: 'ADJ' },
+        { text: 'synthesis', weight: 0.97, tag: 'NOUN' },
+        { text: 'across', weight: 0.52, tag: 'ADP' },
+        { text: 'diverse', weight: 0.88, tag: 'ADJ' },
+        { text: 'domains', weight: 0.95, tag: 'NOUN' }
+      ],
+      prediction: '96.5% HIGH DIVERSITY',
+      confidence: 96.5,
+      perplexity: 1.21,
+      wavePoints: 'M0,16 Q40,4 80,18 T160,6 T240,16 T300,8'
+    }
+  };
 
   // Model performance grouped data matching reference image
   const modelPerformanceData = [
@@ -127,322 +243,414 @@ export const OverviewView: React.FC<OverviewProps> = ({ onNavigate }) => {
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem', maxWidth: '1440px', margin: '0 auto' }}>
       {/* =========================================================================
-          1. HERO SECTION (Exact reproduction with glowing 3D holographic AI brain)
+          1. NEXT-GEN INTERACTIVE NEURAL STUDIO HERO (Cyberpunk Glassmorphic Matrix)
           ========================================================================= */}
       <div
         style={{
-          background: 'linear-gradient(135deg, #090e1e 0%, #0c1226 100%)',
-          borderRadius: '16px',
-          border: '1px solid rgba(139, 92, 246, 0.22)',
-          padding: '2rem 2.25rem',
+          background: 'linear-gradient(135deg, rgba(9, 14, 28, 0.96) 0%, rgba(13, 19, 42, 0.98) 50%, rgba(18, 12, 38, 0.96) 100%)',
+          borderRadius: '20px',
+          border: '1px solid rgba(139, 92, 246, 0.28)',
+          padding: '2.25rem 2.5rem',
           display: 'grid',
-          gridTemplateColumns: '1.2fr 1fr',
-          gap: '2rem',
+          gridTemplateColumns: '1.15fr 1.05fr',
+          gap: '2.5rem',
           alignItems: 'center',
-          boxShadow: '0 8px 32px rgba(0, 0, 0, 0.45)',
+          boxShadow: '0 16px 48px -8px rgba(0, 0, 0, 0.65), 0 0 32px rgba(139, 92, 246, 0.15)',
           position: 'relative',
           overflow: 'hidden'
         }}
       >
-        {/* Ambient background glow */}
+        {/* Subtle cyber grid backdrop pattern */}
         <div
           style={{
             position: 'absolute',
-            top: '-20%',
-            left: '30%',
-            width: '500px',
-            height: '500px',
-            background: 'radial-gradient(circle, rgba(139, 92, 246, 0.15) 0%, rgba(34, 211, 238, 0.05) 50%, transparent 70%)',
+            inset: 0,
+            backgroundImage: 'radial-gradient(rgba(139, 92, 246, 0.1) 1px, transparent 1px)',
+            backgroundSize: '24px 24px',
+            pointerEvents: 'none',
+            opacity: 0.7
+          }}
+        />
+
+        {/* Ambient multi-color neon glow spotlights */}
+        <div
+          style={{
+            position: 'absolute',
+            top: '-25%',
+            left: '20%',
+            width: '450px',
+            height: '450px',
+            background: 'radial-gradient(circle, rgba(139, 92, 246, 0.22) 0%, transparent 70%)',
             filter: 'blur(60px)',
             pointerEvents: 'none'
           }}
         />
+        <div
+          style={{
+            position: 'absolute',
+            bottom: '-25%',
+            right: '5%',
+            width: '400px',
+            height: '400px',
+            background: 'radial-gradient(circle, rgba(34, 211, 238, 0.18) 0%, transparent 70%)',
+            filter: 'blur(60px)',
+            pointerEvents: 'none'
+          }}
+        />
+        <div
+          style={{
+            position: 'absolute',
+            top: '30%',
+            right: '35%',
+            width: '320px',
+            height: '320px',
+            background: 'radial-gradient(circle, rgba(236, 72, 153, 0.12) 0%, transparent 70%)',
+            filter: 'blur(70px)',
+            pointerEvents: 'none'
+          }}
+        />
 
-        {/* Left Column: Hero Text & Buttons */}
-        <div style={{ position: 'relative', zIndex: 1 }}>
+        {/* Left Column: Hero Text, Mission & Interactive Action Matrix */}
+        <div style={{ position: 'relative', zIndex: 2 }}>
+          {/* Status Telemetry Pill */}
           <div
             style={{
               display: 'inline-flex',
               alignItems: 'center',
-              gap: '8px',
-              padding: '4px 12px',
+              gap: '10px',
+              padding: '5px 14px',
               borderRadius: '100px',
-              background: 'rgba(124, 58, 237, 0.15)',
-              border: '1px solid rgba(139, 92, 246, 0.4)',
-              fontSize: '0.74rem',
-              color: '#c4b5fd',
-              fontWeight: 600,
-              marginBottom: '1rem'
+              background: 'rgba(139, 92, 246, 0.12)',
+              border: '1px solid rgba(139, 92, 246, 0.35)',
+              marginBottom: '1.1rem',
+              backdropFilter: 'blur(8px)'
             }}
           >
-            AI-Powered NLP Research Platform
+            <span
+              style={{
+                width: '8px',
+                height: '8px',
+                borderRadius: '50%',
+                background: '#10b981',
+                boxShadow: '0 0 10px #10b981',
+                display: 'inline-block'
+              }}
+            />
+            <span style={{ fontSize: '0.72rem', fontWeight: 800, color: '#38bdf8', letterSpacing: '0.06em', textTransform: 'uppercase' }}>
+              NLP Neural Suite v3.5
+            </span>
+            <span style={{ fontSize: '0.7rem', color: '#64748b' }}>•</span>
+            <span style={{ fontSize: '0.72rem', color: '#cbd5e1', fontWeight: 600 }}>
+              Hardware Accelerated
+            </span>
           </div>
 
           <h1
             style={{
-              fontSize: '2.55rem',
+              fontSize: '2.65rem',
               fontWeight: 900,
-              letterSpacing: '-0.03em',
+              letterSpacing: '-0.035em',
               lineHeight: 1.15,
               color: '#ffffff',
-              margin: '0 0 1rem 0'
+              margin: '0 0 1.1rem 0'
             }}
           >
-            Understand Language. <br />
+            Decode Neural Thought. <br />
             <span
               style={{
-                background: 'linear-gradient(90deg, #22d3ee 0%, #818cf8 100%)',
+                background: 'linear-gradient(90deg, #38bdf8 0%, #818cf8 45%, #c084fc 100%)',
                 WebkitBackgroundClip: 'text',
-                WebkitTextFillColor: 'transparent'
+                WebkitTextFillColor: 'transparent',
+                display: 'inline-block',
+                filter: 'drop-shadow(0 2px 14px rgba(139, 92, 246, 0.35))'
               }}
             >
-              Explore Intelligence.
+              Architect Tomorrow's NLP.
             </span>
           </h1>
 
-          <p style={{ fontSize: '0.92rem', color: '#94a3b8', lineHeight: 1.6, maxWidth: '520px', margin: '0 0 1.75rem 0' }}>
-            An interactive laboratory for Language Model evaluation, sentiment analysis, and advanced NLP research.
+          <p style={{ fontSize: '0.94rem', color: '#94a3b8', lineHeight: 1.65, maxWidth: '530px', margin: '0 0 1.75rem 0' }}>
+            An advanced cognitive research platform for Transformer Model evaluation, real-time attention vectoring, deep sentiment dynamics, and cross-lingual intelligence.
           </p>
 
-          <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap' }}>
+          {/* Action Hub Buttons */}
+          <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap', marginBottom: '1.75rem' }}>
             <button
               onClick={() => onNavigate('analyzer')}
               style={{
                 display: 'inline-flex',
                 alignItems: 'center',
                 gap: '8px',
-                padding: '0.7rem 1.4rem',
-                borderRadius: '10px',
+                padding: '0.75rem 1.45rem',
+                borderRadius: '12px',
                 background: 'linear-gradient(135deg, #7c3aed 0%, #db2777 100%)',
                 color: '#ffffff',
                 border: 'none',
                 fontWeight: 700,
                 fontSize: '0.88rem',
                 cursor: 'pointer',
-                boxShadow: '0 4px 20px rgba(124, 58, 237, 0.45)',
-                transition: 'all 0.15s ease'
+                boxShadow: '0 4px 24px rgba(124, 58, 237, 0.45)',
+                transition: 'all 0.2s ease'
               }}
             >
-              <span>Analyze Text</span>
+              <Zap size={16} />
+              <span>Launch Text Studio</span>
               <ArrowRight size={15} />
             </button>
 
             <button
-              onClick={() => onNavigate('experiments')}
+              onClick={() => onNavigate('arena')}
               style={{
                 display: 'inline-flex',
                 alignItems: 'center',
                 gap: '8px',
-                padding: '0.7rem 1.3rem',
-                borderRadius: '10px',
+                padding: '0.75rem 1.3rem',
+                borderRadius: '12px',
                 background: 'rgba(255, 255, 255, 0.04)',
-                border: '1px solid rgba(255, 255, 255, 0.14)',
-                color: '#ffffff',
+                border: '1px solid rgba(139, 92, 246, 0.3)',
+                color: '#f1f5f9',
                 fontWeight: 600,
                 fontSize: '0.88rem',
-                cursor: 'pointer'
+                cursor: 'pointer',
+                backdropFilter: 'blur(8px)',
+                transition: 'all 0.2s ease'
               }}
             >
-              <FlaskConical size={15} color="#8b5cf6" />
-              <span>View Experiments</span>
+              <Activity size={16} color="#38bdf8" />
+              <span>Model Arena</span>
             </button>
+
+            <button
+              onClick={() => onNavigate('multitask')}
+              style={{
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '8px',
+                padding: '0.75rem 1.3rem',
+                borderRadius: '12px',
+                background: 'rgba(255, 255, 255, 0.04)',
+                border: '1px solid rgba(255, 255, 255, 0.12)',
+                color: '#cbd5e1',
+                fontWeight: 600,
+                fontSize: '0.88rem',
+                cursor: 'pointer',
+                transition: 'all 0.2s ease'
+              }}
+            >
+              <Sparkles size={16} color="#c084fc" />
+              <span>Multi-Task Lab</span>
+            </button>
+          </div>
+
+          {/* Quick Capability Feature Chips */}
+          <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap', alignItems: 'center' }}>
+            <span style={{ fontSize: '0.72rem', color: '#64748b', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.05em', marginRight: '4px' }}>
+              Capabilities:
+            </span>
+
+            {[
+              { label: 'Sentiment Analysis', page: 'analyzer' as PageId, color: '#8b5cf6' },
+              { label: 'NER & Entities', page: 'multitask' as PageId, color: '#38bdf8' },
+              { label: 'Summarizer', page: 'multitask' as PageId, color: '#10b981' },
+              { label: 'Explainability', page: 'explainability' as PageId, color: '#f59e0b' },
+              { label: 'Multilingual NLP', page: 'multilingual-docs' as PageId, color: '#ec4899' }
+            ].map(cap => (
+              <button
+                key={cap.label}
+                onClick={() => onNavigate(cap.page)}
+                style={{
+                  background: 'rgba(15, 23, 42, 0.65)',
+                  border: `1px solid ${cap.color}35`,
+                  color: '#e2e8f0',
+                  fontSize: '0.72rem',
+                  fontWeight: 600,
+                  padding: '4px 10px',
+                  borderRadius: '8px',
+                  cursor: 'pointer',
+                  transition: 'all 0.15s ease',
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: '5px'
+                }}
+              >
+                <span style={{ width: '6px', height: '6px', borderRadius: '50%', background: cap.color }} />
+                <span>{cap.label}</span>
+              </button>
+            ))}
           </div>
         </div>
 
-        {/* Right Column: Holographic AI Brain & Connected Task Pedestal */}
-        <div style={{ position: 'relative', height: '280px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-          {/* Central Pedestal & Floating Brain Asset */}
+        {/* Right Column: Interactive Neural Matrix & Live Model Deck */}
+        <div style={{ position: 'relative', zIndex: 2 }}>
+          {/* Glassmorphic Neural Deck Shell */}
           <div
             style={{
-              position: 'relative',
-              width: '210px',
-              height: '210px',
-              borderRadius: '50%',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center'
+              background: 'rgba(11, 16, 33, 0.85)',
+              borderRadius: '16px',
+              border: `1px solid ${heroModels[activeHeroModel].accentGlow}`,
+              boxShadow: `0 8px 32px rgba(0, 0, 0, 0.5), 0 0 24px ${heroModels[activeHeroModel].accentGlow}20`,
+              backdropFilter: 'blur(16px)',
+              padding: '1.35rem',
+              transition: 'all 0.3s ease'
             }}
           >
-            {/* Glowing circular cyber ring */}
-            <div
-              style={{
-                position: 'absolute',
-                inset: '-10px',
-                borderRadius: '50%',
-                border: '1px solid rgba(34, 211, 238, 0.35)',
-                boxShadow: '0 0 30px rgba(139, 92, 246, 0.3)',
-                animation: 'pulseGlow 3s ease-in-out infinite'
-              }}
-            />
+            {/* Model Selector Tabs Header */}
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem', borderBottom: '1px solid rgba(255, 255, 255, 0.08)', paddingBottom: '0.75rem' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                <Activity size={16} color={heroModels[activeHeroModel].color} />
+                <span style={{ fontSize: '0.78rem', fontWeight: 800, color: '#ffffff', letterSpacing: '0.04em', textTransform: 'uppercase' }}>
+                  Live Model Engine
+                </span>
+              </div>
 
-            {/* Generated Photorealistic Holographic AI Brain Asset */}
-            <img
-              src="/assets/holographic_brain.jpg"
-              alt="Holographic AI Brain"
-              style={{
-                width: '180px',
-                height: '180px',
-                borderRadius: '50%',
-                objectFit: 'cover',
-                filter: 'drop-shadow(0 0 16px rgba(139, 92, 246, 0.8))'
-              }}
-            />
-
-            {/* Pedestal pill badge */}
-            <div
-              style={{
-                position: 'absolute',
-                bottom: '-12px',
-                background: '#090d1c',
-                border: '1px solid rgba(34, 211, 238, 0.5)',
-                borderRadius: '100px',
-                padding: '4px 14px',
-                textAlign: 'center',
-                boxShadow: '0 4px 12px rgba(0,0,0,0.6)',
-                zIndex: 2
-              }}
-            >
-              <div style={{ fontSize: '0.72rem', fontWeight: 800, color: '#38bdf8' }}>LLMs</div>
-              <div style={{ fontSize: '0.62rem', color: '#94a3b8' }}>BERT • GPT • Llama</div>
+              {/* Interactive Model Switcher Pills */}
+              <div style={{ display: 'flex', gap: '6px', background: 'rgba(0, 0, 0, 0.3)', padding: '3px', borderRadius: '10px' }}>
+                {(Object.keys(heroModels) as Array<keyof typeof heroModels>).map(key => {
+                  const m = heroModels[key];
+                  const isActive = activeHeroModel === key;
+                  return (
+                    <button
+                      key={key}
+                      onClick={() => setActiveHeroModel(key)}
+                      style={{
+                        padding: '4px 10px',
+                        borderRadius: '7px',
+                        border: 'none',
+                        background: isActive ? m.gradient : 'transparent',
+                        color: isActive ? '#ffffff' : '#94a3b8',
+                        fontSize: '0.72rem',
+                        fontWeight: 700,
+                        cursor: 'pointer',
+                        transition: 'all 0.2s ease',
+                        boxShadow: isActive ? `0 2px 10px ${m.accentGlow}` : 'none'
+                      }}
+                    >
+                      {m.name.split('-')[0]}
+                    </button>
+                  );
+                })}
+              </div>
             </div>
-          </div>
 
-          {/* Floating Connected Nodes (Exact from reference) */}
-          {/* Top Left: Text Analysis */}
-          <div
-            style={{
-              position: 'absolute',
-              top: '10px',
-              left: '10px',
-              background: '#0e1428',
-              border: '1px solid rgba(139, 92, 246, 0.35)',
-              borderRadius: '8px',
-              padding: '6px 10px',
-              display: 'flex',
-              alignItems: 'center',
-              gap: '8px',
-              boxShadow: '0 4px 12px rgba(0,0,0,0.5)'
-            }}
-          >
-            <FileText size={14} color="#a855f7" />
-            <div>
-              <div style={{ fontSize: '0.72rem', fontWeight: 700, color: '#f1f5f9' }}>Text Analysis</div>
-              <div style={{ fontSize: '0.62rem', color: '#64748b' }}>Sentiment, Emotion</div>
+            {/* Active Model Overview Bar */}
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '0.9rem' }}>
+              <div>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '3px' }}>
+                  <span style={{ fontSize: '1.05rem', fontWeight: 800, color: '#ffffff' }}>
+                    {heroModels[activeHeroModel].name}
+                  </span>
+                  <span
+                    style={{
+                      fontSize: '0.66rem',
+                      fontWeight: 800,
+                      padding: '2px 8px',
+                      borderRadius: '100px',
+                      background: `${heroModels[activeHeroModel].badgeColor}20`,
+                      color: heroModels[activeHeroModel].badgeColor,
+                      border: `1px solid ${heroModels[activeHeroModel].badgeColor}40`
+                    }}
+                  >
+                    {heroModels[activeHeroModel].badge}
+                  </span>
+                </div>
+                <div style={{ fontSize: '0.72rem', color: '#64748b' }}>
+                  {heroModels[activeHeroModel].architecture} • {heroModels[activeHeroModel].params}
+                </div>
+              </div>
+
+              {/* Status Badge */}
+              <div style={{ display: 'flex', alignItems: 'center', gap: '6px', background: 'rgba(16, 185, 129, 0.1)', border: '1px solid rgba(16, 185, 129, 0.25)', padding: '3px 10px', borderRadius: '100px' }}>
+                <span style={{ width: '6px', height: '6px', borderRadius: '50%', background: '#10b981', display: 'inline-block' }} />
+                <span style={{ fontSize: '0.68rem', fontWeight: 700, color: '#10b981' }}>Active Inference</span>
+              </div>
             </div>
-          </div>
 
-          {/* Mid Left: Summarization */}
-          <div
-            style={{
-              position: 'absolute',
-              top: '95px',
-              left: '0px',
-              background: '#0e1428',
-              border: '1px solid rgba(34, 211, 238, 0.35)',
-              borderRadius: '8px',
-              padding: '6px 10px',
-              display: 'flex',
-              alignItems: 'center',
-              gap: '8px',
-              boxShadow: '0 4px 12px rgba(0,0,0,0.5)'
-            }}
-          >
-            <Layers size={14} color="#38bdf8" />
-            <div>
-              <div style={{ fontSize: '0.72rem', fontWeight: 700, color: '#f1f5f9' }}>Summarization</div>
-              <div style={{ fontSize: '0.62rem', color: '#64748b' }}>Key insights</div>
+            {/* Real-Time Attention Vectoring Stream */}
+            <div style={{ background: '#070b16', borderRadius: '10px', padding: '10px 12px', border: '1px solid rgba(255, 255, 255, 0.06)', marginBottom: '1rem' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
+                <span style={{ fontSize: '0.68rem', fontWeight: 700, color: '#8e9bb5', letterSpacing: '0.04em', textTransform: 'uppercase' }}>
+                  Attention Weights & Token Attribution
+                </span>
+                <span style={{ fontSize: '0.68rem', color: heroModels[activeHeroModel].color, fontWeight: 700 }}>
+                  Perplexity: {heroModels[activeHeroModel].perplexity}
+                </span>
+              </div>
+
+              {/* Interactive Token Stream Pills */}
+              <div style={{ display: 'flex', gap: '6px', flexWrap: 'wrap' }}>
+                {heroModels[activeHeroModel].tokens.map((tok, idx) => {
+                  const isHovered = heroActiveTokenIdx === idx;
+                  return (
+                    <div
+                      key={idx}
+                      onMouseEnter={() => setHeroActiveTokenIdx(idx)}
+                      onMouseLeave={() => setHeroActiveTokenIdx(null)}
+                      style={{
+                        padding: '4px 8px',
+                        borderRadius: '6px',
+                        background: isHovered
+                          ? `${heroModels[activeHeroModel].color}30`
+                          : `rgba(255, 255, 255, ${0.04 + tok.weight * 0.08})`,
+                        border: isHovered
+                          ? `1px solid ${heroModels[activeHeroModel].color}`
+                          : '1px solid rgba(255, 255, 255, 0.08)',
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '6px',
+                        cursor: 'pointer',
+                        transition: 'all 0.15s ease'
+                      }}
+                    >
+                      <span style={{ fontSize: '0.76rem', fontWeight: 600, color: '#f8fafc' }}>
+                        {tok.text}
+                      </span>
+                      <span
+                        style={{
+                          fontSize: '0.62rem',
+                          fontWeight: 700,
+                          color: heroModels[activeHeroModel].color,
+                          background: 'rgba(0,0,0,0.4)',
+                          padding: '1px 4px',
+                          borderRadius: '4px'
+                        }}
+                      >
+                        {tok.weight.toFixed(2)}
+                      </span>
+                    </div>
+                  );
+                })}
+              </div>
             </div>
-          </div>
 
-          {/* Bottom Left: Q&A */}
-          <div
-            style={{
-              position: 'absolute',
-              bottom: '15px',
-              left: '15px',
-              background: '#0e1428',
-              border: '1px solid rgba(139, 92, 246, 0.35)',
-              borderRadius: '8px',
-              padding: '6px 10px',
-              display: 'flex',
-              alignItems: 'center',
-              gap: '8px',
-              boxShadow: '0 4px 12px rgba(0,0,0,0.5)'
-            }}
-          >
-            <HelpCircle size={14} color="#818cf8" />
-            <div>
-              <div style={{ fontSize: '0.72rem', fontWeight: 700, color: '#f1f5f9' }}>Q&A</div>
-              <div style={{ fontSize: '0.62rem', color: '#64748b' }}>Chat with Documents</div>
+            {/* Neural Activity Waveform Line */}
+            <div style={{ marginBottom: '1rem', position: 'relative', height: '24px', overflow: 'hidden' }}>
+              <svg viewBox="0 0 300 24" style={{ width: '100%', height: '100%', stroke: heroModels[activeHeroModel].color, fill: 'none', strokeWidth: 2 }}>
+                <path d={heroModels[activeHeroModel].wavePoints} />
+              </svg>
             </div>
-          </div>
 
-          {/* Top Right: Named Entity Recognition */}
-          <div
-            style={{
-              position: 'absolute',
-              top: '10px',
-              right: '10px',
-              background: '#0e1428',
-              border: '1px solid rgba(139, 92, 246, 0.35)',
-              borderRadius: '8px',
-              padding: '6px 10px',
-              display: 'flex',
-              alignItems: 'center',
-              gap: '8px',
-              boxShadow: '0 4px 12px rgba(0,0,0,0.5)'
-            }}
-          >
-            <Tag size={14} color="#c084fc" />
-            <div>
-              <div style={{ fontSize: '0.72rem', fontWeight: 700, color: '#f1f5f9' }}>Named Entity Recognition</div>
-              <div style={{ fontSize: '0.62rem', color: '#64748b' }}>People, Places, Organizations</div>
-            </div>
-          </div>
+            {/* Performance Telemetry Grid */}
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '8px' }}>
+              <div style={{ background: 'rgba(0, 0, 0, 0.35)', borderRadius: '8px', padding: '8px 10px', border: '1px solid rgba(255, 255, 255, 0.05)' }}>
+                <div style={{ fontSize: '0.64rem', color: '#64748b', marginBottom: '2px' }}>Latency</div>
+                <div style={{ fontSize: '0.92rem', fontWeight: 800, color: '#ffffff' }}>
+                  {heroModels[activeHeroModel].latency}
+                </div>
+              </div>
 
-          {/* Mid Right: Semantic Search */}
-          <div
-            style={{
-              position: 'absolute',
-              top: '95px',
-              right: '0px',
-              background: '#0e1428',
-              border: '1px solid rgba(34, 211, 238, 0.35)',
-              borderRadius: '8px',
-              padding: '6px 10px',
-              display: 'flex',
-              alignItems: 'center',
-              gap: '8px',
-              boxShadow: '0 4px 12px rgba(0,0,0,0.5)'
-            }}
-          >
-            <Search size={14} color="#22d3ee" />
-            <div>
-              <div style={{ fontSize: '0.72rem', fontWeight: 700, color: '#f1f5f9' }}>Semantic Search</div>
-              <div style={{ fontSize: '0.62rem', color: '#64748b' }}>Find Similar Content</div>
-            </div>
-          </div>
+              <div style={{ background: 'rgba(0, 0, 0, 0.35)', borderRadius: '8px', padding: '8px 10px', border: '1px solid rgba(255, 255, 255, 0.05)' }}>
+                <div style={{ fontSize: '0.64rem', color: '#64748b', marginBottom: '2px' }}>Attention Heads</div>
+                <div style={{ fontSize: '0.88rem', fontWeight: 800, color: '#38bdf8' }}>
+                  {heroModels[activeHeroModel].attentionHeads}
+                </div>
+              </div>
 
-          {/* Bottom Right: Multi-Lingual */}
-          <div
-            style={{
-              position: 'absolute',
-              bottom: '15px',
-              right: '15px',
-              background: '#0e1428',
-              border: '1px solid rgba(139, 92, 246, 0.35)',
-              borderRadius: '8px',
-              padding: '6px 10px',
-              display: 'flex',
-              alignItems: 'center',
-              gap: '8px',
-              boxShadow: '0 4px 12px rgba(0,0,0,0.5)'
-            }}
-          >
-            <Globe2 size={14} color="#f472b6" />
-            <div>
-              <div style={{ fontSize: '0.72rem', fontWeight: 700, color: '#f1f5f9' }}>Multi-Lingual</div>
-              <div style={{ fontSize: '0.62rem', color: '#64748b' }}>Detect & Analyze</div>
+              <div style={{ background: 'rgba(0, 0, 0, 0.35)', borderRadius: '8px', padding: '8px 10px', border: '1px solid rgba(255, 255, 255, 0.05)' }}>
+                <div style={{ fontSize: '0.64rem', color: '#64748b', marginBottom: '2px' }}>Throughput</div>
+                <div style={{ fontSize: '0.92rem', fontWeight: 800, color: '#10b981' }}>
+                  {heroModels[activeHeroModel].throughput}
+                </div>
+              </div>
             </div>
           </div>
         </div>

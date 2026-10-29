@@ -136,9 +136,9 @@ export const Header: React.FC<HeaderProps> = ({
           <Sun size={16} />
         </button>
 
-        {/* User Avatar Circle "K" */}
+        {/* User Avatar Circle "J" */}
         <div
-          title="User Profile: KAVURI RUTHIKA"
+          title="User Profile: J LAKSHMAN CHOWDARY"
           style={{
             width: '36px',
             height: '36px',
@@ -154,7 +154,7 @@ export const Header: React.FC<HeaderProps> = ({
             boxShadow: '0 0 12px rgba(139, 92, 246, 0.45)'
           }}
         >
-          K
+          J
         </div>
       </div>
     </header>

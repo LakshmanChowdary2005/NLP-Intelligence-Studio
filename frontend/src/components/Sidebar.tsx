@@ -265,12 +265,12 @@ export const Sidebar: React.FC<SidebarProps> = ({
                   boxShadow: '0 0 10px rgba(139, 92, 246, 0.4)'
                 }}
               >
-                K
+                J
               </div>
 
               <div>
                 <div style={{ fontWeight: 700, fontSize: '0.78rem', color: '#f1f5f9', letterSpacing: '0.02em' }}>
-                  KAVURI RUTHIKA
+                  J LAKSHMAN CHOWDARY
                 </div>
                 <div style={{ fontSize: '0.66rem', color: '#64748b' }}>
                   Student • AI Researcher
